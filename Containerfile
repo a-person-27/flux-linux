@@ -26,11 +26,5 @@ RUN rpm-ostree install \
     dolphin-emu \
     && ostree container commit
 
-RUN rpm-ostree override remove \
-    gnome-tour \
-    gnome-maps \
-    gnome-weather \
-    && ostree container commit
-
 RUN systemctl enable gamemoded \
     && ostree container commit
