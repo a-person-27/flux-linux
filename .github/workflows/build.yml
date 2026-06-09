@@ -16,14 +16,15 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
-    - name: Free disk space
+
+      - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           sudo rm -rf /opt/hostedtoolcache
           sudo docker image prune -af
-          df -h    
+          df -h /mnt
 
       - name: Install buildah
         run: sudo apt-get install -y buildah
@@ -34,8 +35,12 @@ jobs:
 
       - name: Build image
         run: |
-          buildah build -f Containerfile -t ghcr.io/${{ github.repository_owner }}/ledora:latest .
+          mkdir -p /mnt/buildah-tmp
+          sudo buildah --root /mnt/buildah-tmp/root --runroot /mnt/buildah-tmp/run \
+            build -f Containerfile \
+            -t ghcr.io/${{ github.repository_owner }}/ledora:latest .
 
       - name: Push image
         run: |
-          buildah push ghcr.io/${{ github.repository_owner }}/ledora:latest
+          sudo buildah --root /mnt/buildah-tmp/root --runroot /mnt/buildah-tmp/run \
+            push ghcr.io/${{ github.repository_owner }}/ledora:latest
