@@ -42,30 +42,27 @@ RUN git clone https://github.com/vinceliuice/Graphite-gtk-theme.git /tmp/graphit
 
 RUN mkdir -p /usr/share/backgrounds && \
     curl -L -o /usr/share/backgrounds/ledora-wallpaper.png \
-    "https://raw.githubusercontent.com/YOUR_USERNAME/ledora/main/ledora-wallpaper.png" \
+    "https://raw.githubusercontent.com/a-person-27/main/ledora-wallpaper.png" \
     && ostree container commit
 
 RUN mkdir -p /usr/share/pixmaps && \
     curl -L -o /usr/share/pixmaps/ledora-logo.png \
-    "https://raw.githubusercontent.com/YOUR_USERNAME/ledora/main/ledora-logo.png" \
+    "https://raw.githubusercontent.com/a-person-27/ledora/main/ledora-logo.png" \
     && ostree container commit
 
 RUN mkdir -p /usr/share/glib-2.0/schemas && \
-    cat > /usr/share/glib-2.0/schemas/zz-ledora.gschema.override << 'EOF'
-[org.gnome.desktop.interface]
-gtk-theme='Ledora-Dark'
-color-scheme='prefer-dark'
-accent-color='#348576'
-icon-theme='Adwaita'
-cursor-theme='Adwaita'
-
-[org.gnome.desktop.wm.preferences]
-theme='Ledora-Dark'
-
-[org.gnome.desktop.background]
-picture-uri='file:///usr/share/backgrounds/ledora-wallpaper.png'
-picture-uri-dark='file:///usr/share/backgrounds/ledora-wallpaper.png'
-picture-options='zoom'
-EOF
-    && glib-compile-schemas /usr/share/glib-2.0/schemas \
+    echo '[org.gnome.desktop.interface]' > /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo "gtk-theme='Ledora-Dark'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo "color-scheme='prefer-dark'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo "icon-theme='Adwaita'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo "cursor-theme='Adwaita'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo '' >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo '[org.gnome.desktop.wm.preferences]' >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo "theme='Ledora-Dark'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo '' >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo '[org.gnome.desktop.background]' >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo "picture-uri='file:///usr/share/backgrounds/ledora-wallpaper.png'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo "picture-uri-dark='file:///usr/share/backgrounds/ledora-wallpaper.png'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo "picture-options='zoom'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    glib-compile-schemas /usr/share/glib-2.0/schemas \
     && ostree container commit
