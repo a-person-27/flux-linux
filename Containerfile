@@ -1,8 +1,5 @@
 FROM ghcr.io/ublue-os/base-main:latest
 
-# Ledora - Lightweight PC gaming distro based on Fedora Atomic
-# Focused on PC gaming, emulation, and a clean custom experience
-
 RUN rpm-ostree install \
     gnome-shell \
     gnome-control-center \
@@ -26,5 +23,6 @@ RUN rpm-ostree install \
     dolphin-emu \
     && ostree container commit
 
-RUN systemctl enable gamemoded \
-    && ostree container commit
+COPY usr/ /usr/
+
+RUN ostree container commit
