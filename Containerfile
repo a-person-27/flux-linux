@@ -31,12 +31,23 @@ RUN rpm-ostree install \
     gnome-tweaks \
     gtk-murrine-engine \
     sassc \
+    curl \
     && ostree container commit
 
 RUN git clone https://github.com/vinceliuice/Graphite-gtk-theme.git /tmp/graphite && \
     cd /tmp/graphite && \
     ./install.sh --dest /usr/share/themes --name Ledora --color dark --tweaks rimless && \
     rm -rf /tmp/graphite \
+    && ostree container commit
+
+RUN mkdir -p /usr/share/backgrounds && \
+    curl -L -o /usr/share/backgrounds/ledora-wallpaper.png \
+    "https://raw.githubusercontent.com/YOUR_USERNAME/ledora/main/ledora-wallpaper.png" \
+    && ostree container commit
+
+RUN mkdir -p /usr/share/pixmaps && \
+    curl -L -o /usr/share/pixmaps/ledora-logo.png \
+    "https://raw.githubusercontent.com/YOUR_USERNAME/ledora/main/ledora-logo.png" \
     && ostree container commit
 
 RUN mkdir -p /usr/share/glib-2.0/schemas && \
@@ -50,6 +61,11 @@ cursor-theme='Adwaita'
 
 [org.gnome.desktop.wm.preferences]
 theme='Ledora-Dark'
+
+[org.gnome.desktop.background]
+picture-uri='file:///usr/share/backgrounds/ledora-wallpaper.png'
+picture-uri-dark='file:///usr/share/backgrounds/ledora-wallpaper.png'
+picture-options='zoom'
 EOF
     && glib-compile-schemas /usr/share/glib-2.0/schemas \
     && ostree container commit
