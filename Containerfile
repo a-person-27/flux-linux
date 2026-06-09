@@ -23,6 +23,6 @@ RUN rpm-ostree install \
     dolphin-emu \
     && ostree container commit
 
-COPY usr/ /usr/
-
-RUN ostree container commit
+RUN mkdir -p /usr/lib/systemd/system/gamemoded.service.d && \
+    echo -e "[Install]\nWantedBy=multi-user.target" > /usr/lib/systemd/system/gamemoded.service.d/override.conf \
+    && ostree container commit
