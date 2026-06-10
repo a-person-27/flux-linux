@@ -1,4 +1,4 @@
-name: Build Ledora
+name: Build flux-linux
 
 on:
   push:
@@ -35,11 +35,11 @@ jobs:
       - name: Build image
         run: |
           sudo mkdir -p /mnt/buildah-tmp
-          sudo buildah --root /mnt/buildah-tmp/root --runroot /mnt/buildah-tmp/run build -f Containerfile -t ghcr.io/${{ github.repository_owner }}/ledora:latest .
+          sudo buildah --root /mnt/buildah-tmp/root --runroot /mnt/buildah-tmp/run build -f Containerfile -t ghcr.io/${{ github.repository_owner }}/flux-linux:latest .
 
       - name: Push image
         run: |
-          sudo buildah --root /mnt/buildah-tmp/root --runroot /mnt/buildah-tmp/run push ghcr.io/${{ github.repository_owner }}/ledora:latest
+          sudo buildah --root /mnt/buildah-tmp/root --runroot /mnt/buildah-tmp/run push ghcr.io/${{ github.repository_owner }}/flux-linux:latest
 
   build-iso:
     runs-on: ubuntu-latest
@@ -62,15 +62,17 @@ jobs:
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
       - name: Set image name
-        run: echo "IMAGE=ghcr.io/${{ github.repository_owner }}/ledora:latest" >> $GITHUB_ENV
+        run: echo "IMAGE=ghcr.io/${{ github.repository_owner }}/flux-linux:latest" >> $GITHUB_ENV
 
       - name: Build ISO
         run: |
           sudo mkdir -p /mnt/iso-output
+          sudo mkdir -p /var/lib/containers/storage
           sudo docker run --rm \
             --privileged \
             --pull=always \
             -v /mnt/iso-output:/output \
+            -v /var/lib/containers/storage:/var/lib/containers/storage \
             ghcr.io/osbuild/bootc-image-builder:latest \
             --type iso \
             $IMAGE
@@ -78,6 +80,6 @@ jobs:
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ledora-iso
+          name: flux-linux-iso
           path: /mnt/iso-output/*.iso
-          retention-days: 31
+          retention-days: 7
