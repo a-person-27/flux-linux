@@ -1,0 +1,11 @@
+{
+  "blueprint": {
+    "customizations": {
+      "installer": {
+        "kickstart": {
+          "contents": "lang en_US.UTF-8\nkeyboard us\ntimezone UTC\nrootpw --lock\nuser --name=flux --groups=wheel\nautopart\nreboot"
+        }
+      }
+    }
+  }
+}
