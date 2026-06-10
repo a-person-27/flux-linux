@@ -36,33 +36,33 @@ RUN rpm-ostree install \
 
 RUN git clone https://github.com/vinceliuice/Graphite-gtk-theme.git /tmp/graphite && \
     cd /tmp/graphite && \
-    ./install.sh --dest /usr/share/themes --name Ledora --color dark --tweaks rimless && \
+    ./install.sh --dest /usr/share/themes --name flux-linux --color dark --tweaks rimless && \
     rm -rf /tmp/graphite \
     && ostree container commit
 
 RUN mkdir -p /usr/share/backgrounds && \
-    curl -L -o /usr/share/backgrounds/ledora-wallpaper.png \
-    "https://raw.githubusercontent.com/a-person-27/main/ledora-wallpaper.png" \
+    curl -L -o /usr/share/backgrounds/flux-linux-wallpaper.png \
+    "https://raw.githubusercontent.com/a-person-27/main/flux-linux-wallpaper.png" \
     && ostree container commit
 
 RUN mkdir -p /usr/share/pixmaps && \
-    curl -L -o /usr/share/pixmaps/ledora-logo.png \
-    "https://raw.githubusercontent.com/a-person-27/ledora/main/ledora-logo.png" \
+    curl -L -o /usr/share/pixmaps/flux-linux-logo.png \
+    "https://raw.githubusercontent.com/a-person-27/flux-linux/main/flux-linux-logo.png" \
     && ostree container commit
 
 RUN mkdir -p /usr/share/glib-2.0/schemas && \
-    echo '[org.gnome.desktop.interface]' > /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo "gtk-theme='Ledora-Dark'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo "color-scheme='prefer-dark'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo "icon-theme='Adwaita'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo "cursor-theme='Adwaita'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo '' >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo '[org.gnome.desktop.wm.preferences]' >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo "theme='Ledora-Dark'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo '' >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo '[org.gnome.desktop.background]' >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo "picture-uri='file:///usr/share/backgrounds/ledora-wallpaper.png'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo "picture-uri-dark='file:///usr/share/backgrounds/ledora-wallpaper.png'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
-    echo "picture-options='zoom'" >> /usr/share/glib-2.0/schemas/zz-ledora.gschema.override && \
+    echo '[org.gnome.desktop.interface]' > /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo "gtk-theme='flux-linux-Dark'" >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo "color-scheme='prefer-dark'" >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo "icon-theme='Adwaita'" >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo "cursor-theme='Adwaita'" >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo '' >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo '[org.gnome.desktop.wm.preferences]' >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo "theme='flux-linux-Dark'" >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo '' >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo '[org.gnome.desktop.background]' >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo "picture-uri='file:///usr/share/backgrounds/flux-linux-wallpaper.png'" >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo "picture-uri-dark='file:///usr/share/backgrounds/flux-linux-wallpaper.png'" >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
+    echo "picture-options='zoom'" >> /usr/share/glib-2.0/schemas/zz-flux-linux.gschema.override && \
     glib-compile-schemas /usr/share/glib-2.0/schemas \
     && ostree container commit
