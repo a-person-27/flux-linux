@@ -1,4 +1,4 @@
-name: Build flux-linux
+name: Build Flux Linux
 
 on:
   push:
@@ -12,6 +12,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - name: Checkout repo
@@ -26,8 +27,12 @@ jobs:
           sudo docker image prune -af
           df -h /mnt
 
-      - name: Install buildah
-        run: sudo apt-get install -y buildah
+      - name: Install buildah and cosign
+        run: |
+          sudo apt-get install -y buildah
+          curl -Lo cosign https://github.com/sigstore/cosign/releases/latest/download/cosign-linux-amd64
+          chmod +x cosign
+          sudo mv cosign /usr/local/bin/cosign
 
       - name: Log in to GHCR
         run: echo "${{ secrets.GITHUB_TOKEN }}" | buildah login ghcr.io -u ${{ github.actor }} --password-stdin
@@ -41,6 +46,16 @@ jobs:
         run: |
           sudo buildah --root /mnt/buildah-tmp/root --runroot /mnt/buildah-tmp/run push ghcr.io/${{ github.repository_owner }}/flux-linux:latest
 
+      - name: Sign image
+        run: |
+          echo "${{ secrets.COSIGN_PRIVATE_KEY }}" > /tmp/cosign.key
+          cosign sign --key /tmp/cosign.key \
+            --yes \
+            ghcr.io/${{ github.repository_owner }}/flux-linux:latest
+          rm /tmp/cosign.key
+        env:
+          COSIGN_PASSWORD: ${{ secrets.COSIGN_PASSWORD }}
+
   build-iso:
     runs-on: ubuntu-latest
     needs: build-container
@@ -49,6 +64,9 @@ jobs:
       packages: read
 
     steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
       - name: Free disk space
         run: |
           sudo rm -rf /usr/share/dotnet
@@ -74,12 +92,20 @@ jobs:
             -v /mnt/iso-output:/output \
             -v /var/lib/containers/storage:/var/lib/containers/storage \
             ghcr.io/osbuild/bootc-image-builder:latest \
-            --type iso \
-            $IMAGE
+            --type anaconda-iso \
+            --config /dev/stdin \
+            $IMAGE << 'EOF'
+          {
+            "blueprint": {
+              "customizations": {
+                "installer": {
+                  "kickstart": {
+                    "contents": "lang en_US.UTF-8\nkeyboard us\ntimezone UTC\nrootpw --lock\nuser --name=flux --groups=wheel\nautopart\nreboot"
+                  }
+                }
+              }
+            }
+          }
+          EOF
 
       - name: Upload ISO as artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: flux-linux-iso
-          path: /mnt/iso-output/*.iso
-          retention-days: 7
