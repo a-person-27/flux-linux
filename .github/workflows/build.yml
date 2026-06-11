@@ -104,13 +104,13 @@ jobs:
             -v /var/lib/containers/storage:/var/lib/containers/storage \
             -v ${{ github.workspace }}/bootc-config.json:/config.json \
             ghcr.io/osbuild/bootc-image-builder:latest \
-            --type anaconda-iso \
+            --type iso \
             --rootfs xfs \
             --config /config.json \
             $IMAGE
 
       - name: Find ISO
-        run: find /mnt/iso-output -name "*.iso" -o -name "*.img" | tee /tmp/iso-files.txt && cat /tmp/iso-files.txt
+        run: find /mnt/iso-output -type f | tee /tmp/iso-files.txt && cat /tmp/iso-files.txt
 
       - name: Upload ISO as artifact
         uses: actions/upload-artifact@v4
